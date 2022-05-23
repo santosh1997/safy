@@ -1,7 +1,5 @@
 import crypto from "crypto";
-import { Readable } from "stream";
 import { getEnvVar } from "../processor";
-import getBufferFromStream from "../utils/convertor/streamToBuffer";
 import { AESConfig } from "./encryptor.constants";
 class Encrypt {
   private RSAPrivateKey: crypto.KeyObject;
@@ -25,6 +23,22 @@ class Encrypt {
     );
   }
 
+  getCipher(): crypto.Cipher {
+    return crypto.createCipheriv(
+      AESConfig.name,
+      AESConfig.key,
+      AESConfig.initVector
+    );
+  }
+
+  getDecipher(): crypto.Cipher {
+    return crypto.createDecipheriv(
+      AESConfig.name,
+      AESConfig.key,
+      AESConfig.initVector
+    );
+  }
+
   encrypt(data: string): string {
     const cipher = crypto.createCipheriv(
       AESConfig.name,
@@ -38,26 +52,6 @@ class Encrypt {
       AESConfig.cipherFormat,
       AESConfig.outputFormat
     );
-  }
-
-  async encryptFile(file: Readable): Promise<Buffer> {
-    const cipher = crypto.createCipheriv(
-      AESConfig.name,
-      AESConfig.key,
-      AESConfig.initVector
-    );
-    const fileBuffer = await getBufferFromStream(file);
-    return Buffer.concat([cipher.update(fileBuffer), cipher.final()]);
-  }
-
-  async decryptFile(file: Readable): Promise<Buffer> {
-    const decipher = crypto.createDecipheriv(
-      AESConfig.name,
-      AESConfig.key,
-      AESConfig.initVector
-    );
-    const fileBuffer = await getBufferFromStream(file);
-    return Buffer.concat([decipher.update(fileBuffer), decipher.final()]);
   }
 
   decrypt(encryptedData: string): string {

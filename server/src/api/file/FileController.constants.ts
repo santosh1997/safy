@@ -16,6 +16,6 @@ const SupportedImageExtensions = [
   "tif",
   "tiff",
 ];
-const SupportedVideoExtensions = ["ogg", "webm", "mp4", "wav", "mp3"];
+const SupportedVideoExtensions = ["ogg", "webm", "mp4", "wav", "mp3", "mkv"];
 
 export { SupportedImageExtensions, SupportedVideoExtensions };

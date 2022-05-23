@@ -41,17 +41,15 @@ class SFYRouter {
           >(req, props.authType, props.handler);
           res.json(result);
         } else {
-          const writableStream = new Stream.PassThrough(),
-            result = await this.invokeAuthenticatedCallback<
-              ReturnType<typeof props.handler>
-            >(req, props.authType, props.handler);
+          const result = await this.invokeAuthenticatedCallback<
+            ReturnType<typeof props.handler>
+          >(req, props.authType, props.handler);
           res.set(
             "Content-disposition",
             "attachment; filename=" + result.fileName
           );
           res.set("Content-Type", "application/octet-stream");
-          writableStream.end(result.content);
-          writableStream.pipe(res);
+          result.content.pipe(res);
         }
       } catch (e) {
         const errorResponse = errorHandler(e);

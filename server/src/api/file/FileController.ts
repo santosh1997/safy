@@ -13,10 +13,9 @@ import Busboy from "busboy";
 import { createWriteStream, createReadStream, unlink } from "node:fs";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
-import { Readable, Stream } from "node:stream";
+import { Readable } from "node:stream";
 import Encryptor from "../../crosscutting/encryptor/encryptor";
 import SFYInvalidFileError from "../../crosscutting/errorHandler/errors/File/SFYInvalidFileError";
-import SFYUnreadableFileError from "../../crosscutting/errorHandler/errors/File/SFYUnreadableFileError";
 import { FileResponse } from "../../crosscutting/router/SFYRouter/routes.type";
 import {
   SupportedImageExtensions,
@@ -56,9 +55,8 @@ class FileController extends SFYBaseContoller {
           busboy.emit("error", new SFYFileTypeError());
         else {
           const filePath = this.getUploadPath(fileInfo.key),
-            writableStream = createWriteStream(filePath),
-            encryptedBuffer = await Encryptor.encryptFile(file);
-          writableStream.write(encryptedBuffer);
+            writableStream = createWriteStream(filePath);
+          file.pipe(Encryptor.getCipher()).pipe(writableStream);
           fileInfo.uploaded = true;
         }
       }
@@ -99,28 +97,18 @@ class FileController extends SFYBaseContoller {
     return SFYFileType.Any;
   }
 
-  private getFile(id: string): Promise<Buffer> {
-    return new Promise((resolve, reject) => {
-      const filePath = this.getUploadPath(id),
-        readableStream = createReadStream(filePath);
-      readableStream.on("open", async () => {
-        const decryptedBuffer = await Encryptor.decryptFile(readableStream);
-        resolve(decryptedBuffer);
-      });
-      readableStream.on("error", (error) => {
-        reject(new SFYUnreadableFileError(error));
-      });
-    });
+  private getFile(id: string): Readable {
+    const filePath = this.getUploadPath(id),
+      readableStream = createReadStream(filePath);
+    return readableStream.pipe(Encryptor.getDecipher());
   }
 
   async download(request: Request): Promise<FileResponse> {
     try {
       if (!request.params.id || typeof request.params.id !== "string")
         throw new SFYInvalidFileError();
-      const [content, name] = await Promise.all([
-        this.getFile(request.params.id),
-        this.fileService.getName(request.params.id),
-      ]);
+      const content = this.getFile(request.params.id),
+        name = await this.fileService.getName(request.params.id);
       if (!name) throw new SFYInvalidFileError();
       return { content, fileName: name };
     } catch (e) {

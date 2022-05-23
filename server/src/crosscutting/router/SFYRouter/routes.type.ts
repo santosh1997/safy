@@ -1,4 +1,5 @@
 import { Request } from "express";
+import { Readable } from "node:stream";
 import { SFYBaseControllerProps } from "../../../api/base/SFYBaseController.type";
 import { SFYAuthenticatorType } from "../../authenticator/authenticator.type";
 
@@ -19,7 +20,7 @@ type SFYRoute =
   | SFYRouteProps<FileResponse, SFYResponseType.FILE>;
 
 interface FileResponse {
-  content: Buffer;
+  content: Readable;
   fileName: string;
 }
 
