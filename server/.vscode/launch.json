@@ -1,0 +1,16 @@
+{
+  "configurations": [
+    {
+      "command": "npm run debug:serve",
+      "name": "Debug API",
+      "request": "launch",
+      "type": "node-terminal",
+      "program": "${workspaceFolder}/src/api/index.ts",
+      "outFiles": ["${workspaceFolder}/build/**/*.js"],
+      "skipFiles": [
+        "${workspaceFolder}/node_modules/**/*.js",
+        "<node_internals>/**"
+      ]
+    }
+  ]
+}

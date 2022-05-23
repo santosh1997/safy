@@ -1,0 +1,45 @@
+version: "3"
+services:
+  scrappyclient:
+    image: scrappyclient
+    restart: always
+    ports:
+      - "1002:80"
+    build:
+      context: client
+    networks:
+      - scrappynetwork
+  scrappyapi:
+    image: scrappyapi
+    restart: always
+    ports:
+      - "1001:1001"
+    build:
+      context: server
+      dockerfile: ./src/api/Dockerfile
+    depends_on:
+      - scrappystore
+    networks:
+      - scrappynetwork
+  scrappyworker:
+    image: scrappyworker
+    restart: always
+    build:
+      context: server
+      dockerfile: ./src/worker/Dockerfile
+    depends_on:
+      - scrappystore
+    networks:
+      - scrappynetwork
+  scrappystore:
+    image: scrappystore
+    restart: always
+    build:
+      context: db
+    ports:
+      - "3311:3306"
+    networks:
+      - scrappynetwork
+networks:
+  scrappynetwork:
+    driver: bridge

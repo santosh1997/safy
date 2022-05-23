@@ -1,0 +1,4 @@
+const AUTH_TOKEN_STORAGE_KEY = "AUTH_TOKEN";
+const LOGIN_PATH = "/login";
+
+export { AUTH_TOKEN_STORAGE_KEY, LOGIN_PATH };
