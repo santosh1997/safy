@@ -27,9 +27,10 @@ const ServiceConsumer = (() => {
     }
     if (request.type === RequestType.POST) {
       options.method = request.type;
-      if (request.content === ContentType.JSON)
+      if (request.content === ContentType.JSON) {
+        setHeader(options, "Content-Type", `${request.content}`);
         options.body = JSON.stringify(request.data);
-      else if (request.content === ContentType.FORM_DATA)
+      } else if (request.content === ContentType.FORM_DATA)
         options.body = request.data;
     }
     return options;
