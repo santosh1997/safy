@@ -23,6 +23,7 @@ WORKDIR /api
 COPY --from=apideps /apideps/node_modules ./node_modules/
 COPY --from=build /apibuild/build ./build
 COPY --from=build /apibuild/config ./config
+RUN mkdir -p ./uploads
 ENV SFY_DOTENV_CONFIG_PATH="/config/prod.env"
 CMD ["node", "build/api/index.js"]
 
