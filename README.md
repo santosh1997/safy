@@ -15,3 +15,9 @@ It might ~5 minutes to setup the datastore for the first time. All the request t
 1. Logged-in user will be able to delete an already uploaded file.
 1. Logged-in user will be able to upload a new file. Once uploaded, the platform will figure out the file type, it encrypts and stores the file.
 1. Logged-in user will be able to share one of my files publicly using a tiny URL obtained from the system.
+
+### Setup & Demo:
+
+
+https://user-images.githubusercontent.com/20333961/170256078-e9b74a31-c82f-4600-8f76-a014727fe458.mp4
+
